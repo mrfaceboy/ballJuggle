@@ -26,6 +26,7 @@ export class App
         var scene = new BABYLON.Scene(engine);
         // Create a FreeCamera, and set its position to {x: 0, y: 5, z: -10}
         var camera = new BABYLON.ArcRotateCamera('camera1',0,1,15, new BABYLON.Vector3(0,0,0), scene);
+        //attempt to controll the camera movement speed, not super important
         camera.inertialAlphaOffset = 0;
         camera.inertialBetaOffset = 0;
         camera.inertialRadiusOffset = 0;
@@ -41,10 +42,13 @@ export class App
         var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
         // Create a built-in "sphere" shape; its constructor takes 6 params: name, segment, diameter, scene, updatable, sideOrientation
         
+
+        //add the ball to the scene
         this.ball = new Ball();
         scene.addMesh(this.ball.mesh);
 
 
+        //add the boxes to the scene
         let box1 = new Box("red box", new BABYLON.Vector3(-5,0,0), new BABYLON.Color3(1,0,0), scene, this.onClick.bind(this));
         this.boxes.push(box1);
         scene.addMesh(box1.mesh);
@@ -60,22 +64,29 @@ export class App
         // run the render loop
         engine.runRenderLoop(() => {
             scene.render();
+            //call update on the ball so it can move
             this.ball.update(engine.getDeltaTime());
-            this.setButtonEnabled(this.ball.target == null);
+            //toggle the buttons disable/enable state based on if the ball has a target (could be optomized to not bbe called every frame)
+            this.setButtonEnabled();
         });
+
         // the canvas/window resize event handler
         window.addEventListener('resize', function(){
+            //manager canvas size oon window resize
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             engine.resize();
         });
     }
 
-    setButtonEnabled(enable:boolean)
+    //sets the eneable state of the buttons.
+    setButtonEnabled()
     {
-        this.boxes.forEach(b => b.button.disabled = !enable)
+        this.boxes.forEach(b => b.button.disabled = (this.ball.target != null || this.ball.currentBox == b));
     }
 
+
+    //on click handler on the buttons
     onClick(box:Box)
     {
         if(!this.ball.target) this.ball.setBox(box)
