@@ -1,6 +1,6 @@
 import { Color3, Mesh, Scene, StandardMaterial, Vector3 } from "babylonjs";
 
-
+//Box handles what materials it should use and the state of the button that it is related to
 export  class Box
 {
     mesh:Mesh;
